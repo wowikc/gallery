@@ -1,0 +1,27 @@
+<center>
+  <%= for id <- five_ids(@current_id) do %>
+    <img src="<%= Gallery.thumb_url(id) %>"
+    class="<%= thumb_css_class(id, @current_id) %>"
+    phx-click="set_current" phx-value-id="<%= id %>" >
+  <% end %>
+</center>
+
+
+<center>
+    <button phx-click="prev">Prev</button>
+    <button phx-click="next">Next</button>
+
+
+    <button phx-click="toggle_slideshow">
+    <%= if @slideshow == :stopped do %>
+        Play
+    <% else %>
+        Stop
+    <% end %>
+    </button>
+</center>
+
+<center>
+    <img src="<%= Gallery.large_url(@current_id) %>">
+</center>
+
