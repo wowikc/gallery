@@ -1,5 +1,5 @@
 <center>
-  <%= for id <- five_ids(@current_id) do %>
+  <%= for id <- @five_ids do %>
     <img src="<%= Gallery.thumb_url(id) %>"
     class="<%= thumb_css_class(id, @current_id) %>"
     phx-click="set_current" phx-value-id="<%= id %>" >
@@ -22,6 +22,18 @@
 </center>
 
 <center>
-    <img src="<%= Gallery.large_url(@current_id) %>">
+    <img src="<%= Gallery.large_url(@current_id) %>"><br>
+    <button phx-click="remove_image">Remove Image</button>
 </center>
+
+
+<%= form_for @changeset, "#", [phx_change: :validate, phx_submit: :add_image_to_gallery] ,fn f -> %>
+    <%= label f, "Enter id of a picture to add: " %>
+    <%= text_input f, :image_id %>
+    <%= error_tag f, :image_id %>
+
+    <div>
+        <%= submit "Add Image", phx_disable_with: "Saving..." %>
+    </div>
+<% end %>
 

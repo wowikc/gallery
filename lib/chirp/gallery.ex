@@ -1,16 +1,9 @@
-defmodule Gallery do
+defmodule Chirp.Gallery do
+  alias Chirp.Catalog
+
   @unsplash_url "https://images.unsplash.com"
 
-  @ids [
-    "photo-1562971179-4ad6903a7ed6",
-    "photo-1552673597-e3cd6747a996",
-    "photo-1561133036-61a7ed56b424",
-    "photo-1530717449302-271006cdc1bf",
-    "photo-1587589251866-c9c4aa6f2a52",
-    "photo-1587567853821-089af217cdd5"
-  ]
-
-  def image_ids, do: @ids
+  def image_ids, do: Catalog.list_images()
 
   def image_url(image_id, params) do
     URI.parse(@unsplash_url)
@@ -25,37 +18,37 @@ defmodule Gallery do
   def large_url(id),
     do: image_url(id, %{h: 500, fit: "crop"})
 
-  def first_id(ids \\ @ids), do: List.first(ids)
+  def first_image(ids \\ image_ids()), do: List.first(ids)
 
-  def next_image_id(ids \\ @ids, id) do
-    Enum.at(ids, next_index(ids, id), first_id(ids))
+  def next_image_id(ids \\ image_ids(), id) do
+    Catalog.get_image_id(Enum.at(ids, next_index(ids, id), first_image(ids)))
   end
 
   defp next_index(ids, id) do
     ids
-    |> Enum.find_index(&(&1 == id))
+    |> Enum.find_index(&(&1.image_id == id))
     |> Kernel.+(1)
   end
 
-  def prev_image_id(ids \\ @ids, id) do
-    Enum.at(ids, prev_index(ids, id))
+  def prev_image_id(ids \\ image_ids(), id) do
+    Catalog.get_image_id(Enum.at(ids, prev_index(ids, id)))
   end
 
   defp prev_index(ids, id) do
     ids
-    |> Enum.find_index(&(&1 == id))
+    |> Enum.find_index(&(&1.image_id == id))
     |> Kernel.-(1)
   end
 
-  def five_related_id(ids \\ @ids, id) do
-    index = Enum.find_index(ids, &(&1 == id))
+  def five_related_id(ids \\ image_ids(), id) do
+    index = Enum.find_index(ids, &(&1.image_id == id))
 
     [
-      Enum.at(ids, index - 2),
-      Enum.at(ids, index - 1),
-      Enum.at(ids, index),
-      Enum.at(ids, circular_index(ids, index + 1)),
-      Enum.at(ids, circular_index(ids, index + 2))
+      Catalog.get_image_id(Enum.at(ids, index - 2)),
+      Catalog.get_image_id(Enum.at(ids, index - 1)),
+      Catalog.get_image_id(Enum.at(ids, index)),
+      Catalog.get_image_id(Enum.at(ids, circular_index(ids, index + 1))),
+      Catalog.get_image_id(Enum.at(ids, circular_index(ids, index + 2)))
     ]
   end
 
